@@ -1,0 +1,20 @@
+{
+  "functions": {
+    "pages/api/trpc/highPerf/[trpc].ts": {
+      "memory": 3008
+    },
+    "pages/api/trpc/appRoutingForms/[trpc].ts": {
+      "memory": 2048
+    }
+  },
+  "buildCommand": "cd ../.. && yarn build",
+  "outputDirectory": "apps/web/.next",
+  "framework": "nextjs",
+  "installCommand": "yarn install",
+  "builds": [
+    {
+      "src": "apps/web/next.config.js",
+      "use": "@vercel/next"
+    }
+  ]
+}
