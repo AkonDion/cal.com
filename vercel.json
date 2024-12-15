@@ -7,7 +7,7 @@
       "memory": 2048
     }
   },
-  "buildCommand": "cd ../.. && yarn build",
+  "buildCommand": "turbo run build",
   "outputDirectory": "apps/web/.next",
   "framework": "nextjs",
   "installCommand": "yarn install",
