@@ -1,3 +1,7 @@
+# Cal.com
+
+Scheduling infrastructure for absolutely everyone.
+
 <!-- PROJECT LOGO -->
 <p align="center">
   <a href="https://github.com/calcom/cal.com">
