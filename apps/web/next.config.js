@@ -355,7 +355,7 @@ const nextConfig = {
     let afterFiles = [
       {
         source: "/api/v2/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_V2_URL}/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_API_V2_URL || "https://api.cal.com/v2"}/:path*`,
       },
       {
         source: "/org/:slug",
