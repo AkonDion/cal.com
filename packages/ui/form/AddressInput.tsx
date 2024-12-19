@@ -7,35 +7,6 @@ import useOnClickOutside from "@calcom/lib/hooks/useOnclickOutside";
 import { Input } from "../components/form";
 import { Icon } from "../components/icon";
 
-declare global {
-  interface Window {
-    google: {
-      maps: {
-        places: {
-          AutocompleteService: new () => {
-            getPlacePredictions: (
-              request: {
-                input: string;
-                types?: string[];
-                componentRestrictions?: {
-                  country?: string | string[];
-                };
-                bounds?: {
-                  north: number;
-                  south: number;
-                  east: number;
-                  west: number;
-                };
-              },
-              callback: (predictions: { description: string }[] | null, status: string) => void
-            ) => void;
-          };
-        };
-      };
-    };
-  }
-}
-
 export type AddressInputProps = {
   value: string;
   id?: string;
@@ -52,41 +23,8 @@ function AddressInput({ value = "", onChange, ...rest }: AddressInputProps) {
   const [showSuggestedLocations, setShowSuggestedLocations] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const locationsContainerRef = useRef<HTMLDivElement>(null);
-  const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
-  const scriptLoaded = useRef<boolean>(false);
 
   useOnClickOutside(locationsContainerRef, () => setShowSuggestedLocations(false));
-
-  // Load the Google Maps script
-  useEffect(() => {
-    if (scriptLoaded.current) return;
-
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&libraries=places`;
-    script.async = true;
-    script.defer = true;
-
-    script.onload = () => {
-      console.log("Google Maps script loaded successfully");
-      scriptLoaded.current = true;
-      try {
-        autocompleteService.current = new window.google.maps.places.AutocompleteService();
-        console.log("AutocompleteService initialized successfully");
-      } catch (error) {
-        console.error("Error initializing Places Autocomplete:", error);
-      }
-    };
-
-    script.onerror = (error) => {
-      console.error("Error loading Google Maps script:", error);
-    };
-
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, []);
 
   const handlePlacesAutocomplete = useCallback(async () => {
     console.log("handlePlacesAutocomplete called with:", debouncedAddress);
@@ -96,38 +34,23 @@ function AddressInput({ value = "", onChange, ...rest }: AddressInputProps) {
       return;
     }
 
-    if (!autocompleteService.current) {
-      console.log("AutocompleteService not initialized yet");
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      autocompleteService.current.getPlacePredictions(
-        {
-          input: debouncedAddress,
-          types: ["address"],
-          componentRestrictions: { country: "ca" },
-          bounds: {
-            north: 45.5415,
-            south: 45.3015,
-            east: -75.5772,
-            west: -75.8172,
-          },
-        },
-        (predictions, status) => {
-          console.log("Places API response:", { status, predictions });
-          setIsLoading(false);
-
-          if (status !== "OK" && status !== "ZERO_RESULTS") {
-            console.error("Places Autocomplete Error:", status);
-            return;
-          }
-
-          setSuggestedLocations(predictions ? predictions.map((p) => p.description) : []);
-        }
+      const response = await fetch(
+        `/api/location-autocomplete?input=${encodeURIComponent(debouncedAddress)}`
       );
+      const data = await response.json();
+
+      console.log("Places API response:", data);
+      setIsLoading(false);
+
+      if (!response.ok) {
+        console.error("Places Autocomplete Error:", data.error);
+        return;
+      }
+
+      setSuggestedLocations(data.predictions || []);
     } catch (error) {
       setIsLoading(false);
       console.error("Error fetching place predictions:", error);
@@ -141,7 +64,7 @@ function AddressInput({ value = "", onChange, ...rest }: AddressInputProps) {
   };
 
   useEffect(() => {
-    if (debouncedAddress && scriptLoaded.current) {
+    if (debouncedAddress) {
       handlePlacesAutocomplete();
     }
   }, [debouncedAddress, handlePlacesAutocomplete]);
