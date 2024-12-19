@@ -23,17 +23,23 @@ const sendVerificationRequest = async ({ identifier, url }: SendVerificationRequ
     encoding: "utf8",
   });
   const emailTemplate = Handlebars.compile(emailFile);
-  // async transporter
-  transporter.sendMail({
-    from: `${process.env.EMAIL_FROM}` || APP_NAME,
-    to: identifier,
-    subject: `Your sign-in link for ${APP_NAME}`,
-    html: emailTemplate({
-      base_url: WEBAPP_URL,
-      signin_url: url,
-      email: identifier,
-    }),
-  });
+
+  try {
+    await transporter.sendMail({
+      from: `${process.env.EMAIL_FROM}` || APP_NAME,
+      to: identifier,
+      subject: `Your sign-in link for ${APP_NAME}`,
+      html: emailTemplate({
+        base_url: WEBAPP_URL,
+        signin_url: url,
+        email: identifier,
+      }),
+    });
+    console.log("Verification email sent successfully");
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+    throw error;
+  }
 };
 
 export default sendVerificationRequest;
