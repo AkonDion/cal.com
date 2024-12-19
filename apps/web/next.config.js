@@ -664,6 +664,9 @@ const nextConfig = {
 
     return redirects;
   },
+  env: {
+    NEXT_PUBLIC_GOOGLE_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
+  },
 };
 
 if (!!process.env.NEXT_PUBLIC_SENTRY_DSN) {

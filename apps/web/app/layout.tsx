@@ -23,8 +23,8 @@ const calFont = localFont({
 
 export const generateMetadata = () =>
   prepareRootMetadata({
-    twitterCreator: "@calcom",
-    twitterSite: "@calcom",
+    twitterCreator: "@comforthub",
+    twitterSite: "@comforthub",
     robots: {
       index: false,
       follow: false,
@@ -84,6 +84,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <script
           nonce={nonce}
           id="headScript"
+          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html: `
               window.calNewLocale = "${locale}";

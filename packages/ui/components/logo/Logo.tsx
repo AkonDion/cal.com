@@ -5,27 +5,30 @@ export default function Logo({
   icon,
   inline = true,
   className,
-  src = "/api/logo",
 }: {
   small?: boolean;
   icon?: boolean;
   inline?: boolean;
   className?: string;
-  src?: string;
 }) {
+  const darkModeLogo = icon ? "/ch-icon-white.svg" : "/comforthub-logo-white.svg";
+  const lightModeLogo = icon ? "/ch-icon-black.svg" : "/comforthub-logo-black.svg";
+
   return (
     <h3 className={classNames("logo", inline && "inline", className)}>
       <strong>
-        {icon ? (
-          <img className="mx-auto w-9 dark:invert" alt="Cal" title="Cal" src={`${src}?type=icon`} />
-        ) : (
-          <img
-            className={classNames(small ? "h-4 w-auto" : "h-5 w-auto", "dark:invert")}
-            alt="Cal"
-            title="Cal"
-            src={src}
-          />
-        )}
+        <img
+          className={classNames(small ? "h-4 w-auto" : "h-5 w-auto", "dark:hidden")}
+          alt="ComfortHub"
+          title="ComfortHub"
+          src={lightModeLogo}
+        />
+        <img
+          className={classNames(small ? "h-4 w-auto" : "h-5 w-auto", "hidden dark:block")}
+          alt="ComfortHub"
+          title="ComfortHub"
+          src={darkModeLogo}
+        />
       </strong>
     </h3>
   );
