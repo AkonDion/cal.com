@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
         input
       )}&types=address&components=country:ca&location=45.4215,-75.6972&radius=50000&key=${
-        process.env.NEXT_PUBLIC_GOOGLE_API_KEY
+        process.env.GOOGLE_API_KEY
       }`
     );
 
